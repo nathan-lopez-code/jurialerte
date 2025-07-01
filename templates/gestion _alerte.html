@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Liste des arlertes programmer {% endblock %}
+
+
+{% block content %}
+
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3>Liste d'alerte programmée</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-md-flex align-items-center">
+                    <div>
+                      <h4 class="card-title">Alerte non envoyé</h4>
+                    </div>
+
+                  </div>
+                 <div class="table-responsive mt-4">
+                    {% if alerts_no_send %}
+                    <table class="table table-hover table-striped table-bordered align-middle text-nowrap">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" class="text-muted text-uppercase">Nom du Dossier</th>
+                                <th scope="col" class="text-muted text-uppercase">Événement / Date</th>
+                                <th scope="col" class="text-muted text-uppercase text-center">Date Déclenchement</th>
+                                <th scope="col" class="text-muted text-uppercase text-start">Destinataires</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in alerts_no_send %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="ms-3">
+                                            <h6 class="mb-0 fw-bold">{{ d.dossier.nom_affaire }}</h6>
+                                            <span class="text-muted small">{{ d.dossier.numero_dossier }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <h6 class="mb-0 fw-bold">{{ d.get_nom_type_display }}</h6> {# Utilisez get_nom_type_display pour le libellé #}
+                                        <span class="text-muted small">
+                                            {% if d.date_evenement_initial %}
+                                                {{ d.date_evenement_initial|date:"d M Y H:i" }} {# Formatage de la date #}
+                                            {% else %}
+                                                --
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="text-center"> {# Centrer le texte de la date #}
+                                    {# Afficher la date de déclenchement avec un badge ou simplement formatée #}
+                                    <span class="badge bg-warning-subtle text-warning fw-semibold">
+                                        {{ d.date_declenchement_cible|date:"d M Y H:i" }} {# Formatage de la date #}
+                                    </span>
+                                    {# Ou simplement: {{ d.date_declenchement_cible|date:"d M Y H:i" }} #}
+                                </td>
+                                <td>
+                                    <ul class="list-unstyled mb-0"> {# Supprime les puces par défaut et les marges #}
+                                        {% for i in d.destinataires.all %}
+                                            <li class="text-muted small">{{ i.get_full_name|default:i.username }}</li> {# Affiche le nom complet ou le nom d'utilisateur #}
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="alert alert-info" role="alert">
+                        Aucune alerte n'a été enregistrée pour le moment.
+                    </div>
+                    {% endif %}
+                </div>
+
+
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+
+                    <div class="card-body">
+                          <div class="d-md-flex align-items-center">
+                            <div>
+                              <h4 class="card-title">Alerte envoyée</h4>
+                            </div>
+
+                          </div>
+                         <div class="table-responsive mt-4">
+    {% if alerts_send %}
+    <table class="table table-hover table-striped table-bordered align-middle text-nowrap">
+        <thead class="table-light">
+            <tr>
+                <th scope="col" class="text-muted text-uppercase">Nom du Dossier</th>
+                <th scope="col" class="text-muted text-uppercase">Événement / Date</th>
+                <th scope="col" class="text-muted text-uppercase text-center">Statut</th>
+                <th scope="col" class="text-muted text-uppercase text-start">Destinataires</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in alerts_send %}
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="ms-3">
+                            <h6 class="mb-0 fw-bold">{{ d.dossier.nom_affaire }}</h6>
+                            <span class="text-muted small">{{ d.dossier.numero_dossier }}</span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex flex-column">
+                        <h6 class="mb-0 fw-bold">{{ d.get_nom_type_display }}</h6> {# Utilisez get_nom_type_display pour le libellé #}
+                        <span class="text-muted small">
+                            {% if d.date_evenement_initial %}
+                                {{ d.date_evenement_initial|date:"d M Y H:i" }} {# Formatage de la date #}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </span>
+                    </div>
+                </td>
+                <td class="text-center"> {# Centrer le badge pour un meilleur alignement #}
+                    <span class="badge bg-success-subtle text-success fw-semibold">Envoyée</span> {# Style plus subtil #}
+                </td>
+                <td>
+                    <ul class="list-unstyled mb-0"> {# Supprime les puces par défaut et les marges #}
+                        {% for i in d.destinataires.all %}
+                            <li class="text-muted small">{{ i.get_full_name|default:i.username }}</li> {# Affiche le nom complet ou le nom d'utilisateur #}
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        Aucune alerte n'a été envoyée pour le moment.
+    </div>
+    {% endif %}
+</div>
+                    </div>
+                </div>
+            </div>
+
+          </div>
+      </div>
+
+
+{% endblock %}

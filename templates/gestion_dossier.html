@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block title %} Gestion de dossier {% endblock %}
+
+
+{% block content %}
+
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3>Gerer vos Dossiers juridique</h3>
+                                <a class="btn btn-outline-primary mx-3 mt-2 d-block" href="{% url 'dossiers:creer_dossier' %}"><i class="fa-2x fa-check"></i>Creer un nouveau dossier</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-md-flex align-items-center">
+                    <div>
+                      <h4 class="card-title">Liste de dossiers juridique</h4>
+                    </div>
+
+                  </div>
+                  <div class="table-responsive mt-4">
+                  {% if all_dossiers %}
+                    <table class="table mb-0 text-nowrap varient-table align-middle fs-3">
+                      <thead>
+                        <tr>
+                          <th scope="col" class="px-0 text-muted">
+                            Auteur
+                          </th>
+                          <th scope="col" class="px-0 text-muted">Nom dossier</th>
+                          <th scope="col" class="px-0 text-muted">
+                            statut
+                          </th>
+                          <th scope="col" class="px-0 text-muted text-end">
+                            date cration
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for d in all_dossiers %}
+                        <tr>
+                          <td class="px-0">
+                            <div class="d-flex align-items-center">
+                              <img src="{{ d.auteur.profile_picture.url }}" class="rounded-circle" width="40"
+                                alt="flexy" />
+                              <div class="ms-3">
+                                <h6 class="mb-0 fw-bolder">{{ d.auteur.full_name }}</h6>
+                                <span class="text-muted">{{ d.auteur.role }}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="px-0">
+                              <div class="ms-3">
+                                  <h6 class="mb-0 fw-bolder"><a href="{% url 'dossiers:detail_dossier' pk=d.id %}">{{ d.nom_affaire }}</a></h6>
+                                <span class="text-muted">{{ d.numero_dossier }}</span>
+                              </div>
+                          </td>
+                          <td class="px-0">
+                              {% if d.statut == "Ouvert" %}
+                                <span class="badge bg-info">
+                                    {{ d.statut }}
+                                </span>
+                              {% elif d.statut == "Clos" %}
+                                <span class="badge bg-light">
+                                    {{ d.statut }}
+                                </span>
+                              {% else %}
+                                <span class="badge bg-danger-subtle">
+                                    {{ d.statut }}
+                                </span>
+                              {% endif %}
+                          </td>
+                          <td class="px-0 text-dark fw-medium text-end">
+                           {{ d.date_creation }}
+                          </td>
+                        </tr>
+                      {% endfor %}
+
+                      </tbody>
+                    </table>
+                  {% else %}
+                  <p>Aucun dossier n'a ete enregistre pour le moment</p>
+                  {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+{% endblock %}

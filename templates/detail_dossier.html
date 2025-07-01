@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+
+{% load static %}
+
+{% block title %} {{ dossier.nom_affaire }} {% endblock %}
+
+
+{% block content %}
+
+    <div class="body-wrapper-inner">
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="card-title fw-semibold mb-4">Information sur le dossier {{ dossier.numero_dossier }}</h5>
+
+                    {% if dossier_alert %}
+                    <p class="badge p-1 bg-dark-subtle">Alerte planifer pour le {{ dossier_alert.date_declenchement_cible }}</p>
+                    {% else %}
+                    <a href="{% url 'alerts:creation_alerte' dossier_id=dossier.id %}" class="btn btn-outline-primary ">Ajouter une alerte pour ce dossier</a>
+                    {% endif %}
+                </div>
+                <hr>
+                <div class="mt-4">
+                  <div class="d-flex align-items-start">
+                    <div>
+                      <h4 class="card-title">Etape d'evolution du dossier</h4>
+                    </div>
+                    <div class="ms-auto">
+                            <form method="post" class="d-flex align-content-end justify-content-between">
+                                {% csrf_token %}
+                                <div style="margin-right: 20px;">
+
+                                {% for field in evenement_form %}
+                                    <div class="form-group">
+                                        {{ field }}
+                                    </div>
+                                {% endfor %}
+                                </div>
+                                <button type="submit" name="submit_evenement_form" class="btn btn-primary">Modifier etape du dossier</button>
+                            </form>
+                    </div>
+                  </div>
+                  <div class="mt-4 d-flex justify-content-center align-items-center">
+                      <div class="mt-4 pb-3 d-flex align-items-center" style="margin-right: 20px">
+                        <span class="btn btn-info rounded-circle round-48 hstack justify-content-center">
+                          <i class="ti ti-star fs-6"></i>
+                        </span>
+                        <div class="ms-3">
+                          <h5 class="mb-0 fw-bolder fs-4">{{ etapeDossier.last.type_etape }}</h5>
+                          <span class="text-muted fs-3">{{ etapeDossier.last.date_mise_a_jour }}</span>
+                        </div>
+                      </div>
+                      {% for ei in etapes_important %}
+
+                      {% if ei.type_etape == 'audience' %}
+                        <div class="py-3 d-flex align-items-center" style="margin-right: 20px">
+                        <span class="btn btn-warning rounded-circle round-48 hstack justify-content-center">
+                          <i class="ti ti-volume fs-6"></i>
+                        </span>
+                        <div class="ms-3">
+                          <h5 class="mb-0 fw-bolder fs-4">Audience</h5>
+                          <span class="text-muted fs-3">{{ ei.date_mise_a_jour }}</span>
+                        </div>
+                      </div>
+                      {% endif %}
+                      {% if ei.type_etape == 'depot_conclusion' %}
+                        <div class="py-3 d-flex align-items-center">
+                        <span class="btn btn-warning rounded-circle round-48 hstack justify-content-center">
+                          <i class="ti ti-folder fs-6"></i>
+                        </span>
+                        <div class="ms-3">
+                          <h5 class="mb-0 fw-bolder fs-4">Depot_conclusion</h5>
+                          <span class="text-muted fs-3">{{ ei.date_mise_a_jour }}</span>
+                        </div>
+                      </div>
+                      {% endif %}
+                      {% if ei.type_etape == 'jugement_rendu' %}
+                        <div class="py-3 d-flex align-items-center">
+                        <span class="btn btn-warning rounded-circle round-48 hstack justify-content-center">
+                          <i class="ti ti-step-out fs-6"></i>
+                        </span>
+                        <div class="ms-3">
+                          <h5 class="mb-0 fw-bolder fs-4">Jugement rendu</h5>
+                          <span class="text-muted fs-3">{{ ei.date_mise_a_jour }}</span>
+                        </div>
+                      </div>
+                      {% endif %}
+                      {% if ei.type_etape == 'reouverture' %}
+                        <div class="py-3 d-flex align-items-center">
+                        <span class="btn btn-warning rounded-circle round-48 hstack justify-content-center">
+                          <i class="ti ti-star-half fs-6"></i>
+                        </span>
+                        <div class="ms-3">
+                          <h5 class="mb-0 fw-bolder fs-4">Reouverture</h5>
+                          <span class="text-muted fs-3">{{ ei.date_mise_a_jour }}</span>
+                        </div>
+                      </div>
+                      {% endif %}
+                      {% endfor %}
+                  </div>
+                </div>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-5">
+                  <div class="card">
+                    <img src="{% static 'images/juri.jpg' %}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ dossier.nom_affaire }}</h5>
+                     <p class="small"> Numero de dossier: {{ dossier.numero_dossier }}</p>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <i class="badge col-4 bg-info">{{ dossier.statut }}</i>
+                        </div>
+                        <hr>
+                      <p class="card-text">{{ dossier.description }}.</p>
+                        <hr>
+                        <div>
+                            Magistrat :<h6 class="small">{{ dossier.magistrat_responsable }}</h6>
+                            Greffier :<h6 class="small">{{ dossier.greffier_responsable }}</h6>
+                        </div>
+                        <hr>
+                       <div>
+                            Contact partie :<h6 class="small">{{ dossier.contact_partie }}</h6>
+                            Numero partie :<h6 class="small">{{ dossier.numero_telephone_partie }}</h6>
+                        </div>
+                        <hr>
+                      <a  href="{% url 'dossiers:modifier_dossier' pk=dossier.id %}" class="btn btn-info w-100 d-flex justify-content-center">modifier</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-7 mt-10">
+                    <h4 class="card-title mb-0">Historique de modification</h4>
+                    <div class="comment-widgets scrollable mb-2 common-widget" style="height: 465px" data-simplebar="">
+                  <!-- Comment Row -->
+                {% for e in etapeDossier %}
+                <div class="d-flex flex-row comment-row border-bottom  p-3 gap-3">
+                    <div>
+                      <span><img src="{{ e.auteur.profile_picture.url }}" class="rounded-circle" alt="user"
+                          width="50" /></span>
+                    </div>
+                    <div class="comment-text w-100">
+                      <h6 class="fw-medium">{{ e.auteur.full_name }}</h6>
+                      <p class="mb-1 fs-2 text-muted">
+                        {{ e.action_menee }}
+                      </p>
+                      <div class="comment-footer mt-2">
+                        <div class="d-flex align-items-center">
+                          <span class="
+                              badge
+                              bg-info-subtle
+                              text-info
+
+                            ">{{ e.type_etape }}</span>
+                          <span class="action-icons">
+                          </span>
+                        </div>
+                        <span class="
+                            text-muted
+                            ms-auto
+                            fw-normal
+                            fs-2
+                            d-block
+                            mt-2
+                            text-end
+                          ">{{ e.date_mise_a_jour }}</span>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+{% endblock %}

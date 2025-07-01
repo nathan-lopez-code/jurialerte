@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} Liste de rapport {% endblock %}
+
+{% block content %}
+    <div class="body-wrapper-inner">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="card">
+                    <div class="container mt-4">
+                        <div class="d-flex justify-content-between">
+                            <h5>Historique des Rapports Générés</h5>
+                            <div class="mb-3 d-flex justify-content-end"> {# Ajout de classes Bootstrap pour un meilleur alignement #}
+                                <a href="{% url 'reports:generate_report' %}" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle"></i> Générer un nouveau rapport
+                                </a>
+                            </div>
+                        </div>
+
+                        {% if messages %}
+                            <div class="messages">
+                                {% for message in messages %}
+                                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {# Bouton "Générer un nouveau rapport" déplacé ici, en haut #}
+
+
+                        {% if reports %}
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nom du Rapport</th>
+                                        <th>Période</th>
+                                        <th>Généré le</th>
+                                        <th>Généré par</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for report in reports %}
+                                    <tr>
+                                        <td>{{ report.name }}</td>
+                                        <td>Du {{ report.start_date|date:"d/m/Y" }} au {{ report.end_date|date:"d/m/Y" }}</td>
+                                        <td>{{ report.generated_at|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ report.generated_by.get_full_name|default:report.generated_by.username }}</td>
+                                        <td>
+                                            {% if report.pdf_file %}
+                                                <a href="{% url 'reports:download_report' report.id %}" class="btn btn-sm btn-outline-success">
+                                                    <i class="bi bi-download"></i> Télécharger
+                                                </a>
+                                            {% else %}
+                                                <span class="text-danger small">Fichier manquant</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info" role="alert">
+                            Aucun rapport n'a été généré pour le moment.
+                        </div>
+                        {% endif %}
+
+                        {# Le div `mt-3` contenant le bouton a été supprimé d'ici car le bouton est déplacé en haut #}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,342 @@
+{% load static %}
+
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %} JURIALERTE {% endblock %}</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'images/logos/logo_.png' %}" />
+  <link rel="stylesheet" href="{% static 'css/styles.min.css' %}" />
+    {% block css %}{% endblock %}
+</head>
+
+{% block body %}
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+
+    <!--  App Topstrip -->
+    <div class="app-topstrip bg-dark py-6 px-3 w-100 d-lg-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center justify-content-center gap-5 mb-2 mb-lg-0">
+        <a class="d-flex justify-content-center" href="#">
+          <img src="{% static 'images/logos/logo_.png' %}" alt="" width="40px">
+        </a>
+
+
+      </div>
+
+
+    </div>
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-center">
+          <a  href="{% url 'users:index' %}" class="text-nowrap logo-img">
+            <img width="150px" src="{% static 'images/logos/logo_.png' %}" alt="" />
+          </a>
+        </div>
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{% url 'users:index' %}" aria-expanded="false">
+                <i class="ti ti-atom"></i>
+                <span class="hide-menu">Accueil</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link justify-content-between"
+                href="{% url 'dossiers:gestion_dossier' %}" aria-expanded="false">
+                <div class="d-flex align-items-center gap-3">
+                  <span class="d-flex">
+                    <i class="ti ti-aperture"></i>
+                  </span>
+                  <span class="hide-menu">Gestion de dossiers</span>
+                </div>
+
+              </a>
+            </li>
+             <li class="sidebar-item">
+              <a class="sidebar-link justify-content-between"
+                href="{% url 'alerts:liste_alertes' %}" aria-expanded="false">
+                <div class="d-flex align-items-center gap-3">
+                  <span class="d-flex">
+                    <i class="ti ti-urgent"></i>
+                  </span>
+                  <span class="hide-menu">Alertes programmées</span>
+                </div>
+
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link justify-content-between"
+                href="{% url 'reports:list_rapport' %}" aria-expanded="false">
+                <div class="d-flex align-items-center gap-3">
+                  <span class="d-flex">
+                    <i class="ti ti-folder"></i>
+                  </span>
+                  <span class="hide-menu">Rapports</span>
+                </div>
+
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+        <nav class="navbar navbar-expand-lg navbar-light">
+          <ul class="navbar-nav">
+            <li class="nav-item d-block d-xl-none">
+              <a class="nav-link sidebartoggler " id="headerCollapse" href="javascript:void(0)">
+                <i class="ti ti-menu-2"></i>
+              </a>
+            </li>
+          </ul>
+          <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+               
+              <li class="nav-item dropdown">
+                <a class="nav-link " href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <img src="{% static 'images/profile/user-1.jpg' %}" alt="" width="35" height="35" class="rounded-circle">
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+                  <div class="message-body">
+                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                      <i class="ti ti-user fs-6"></i>
+                      <p class="mb-0 fs-3">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+                    </a>
+                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                      <i class="ti ti-list-check fs-6"></i>
+                      <p class="mb-0 fs-3">Role : {{ request.user.role }}</p>
+                    </a>
+                    <a href="{% url 'users:logout' %}" class="btn btn-outline-primary mx-3 mt-2 d-block">Se deconnecter</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!--  Header End -->
+      {% block content %}
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+          <!--  Row 1 -->
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="card w-100">
+                <div class="card-body">
+                  <div class="d-md-flex align-items-center">
+                    <div>
+                      <h4 class="card-title">Gestion de dossier</h4>
+                    </div>
+                  </div>
+                  <div class="mt-4 mx-n6">
+                      <div class="d-flex justify-content-between align-items-center">
+                          <a class="btn col-7 btn-outline-info" href="{% url 'dossiers:creer_dossier' %}"> Creer un nouveau dossier </a>
+                          <a class="btn col-4 btn-outline-info" href="{% url 'dossiers:gestion_dossier' %}"> Gerer les dossiers </a>
+                      </div>
+                      <hr>
+                      <div class="d-flex justify-content-between align-items-cente">
+                          <button type="button" class="btn btn-outline-primary col-7" data-bs-toggle="modal" data-bs-target="#myModal">Creer une alerte</button>
+                          <a class="btn col-4 btn-outline-primary" href="{% url 'alerts:liste_alertes' %}">Liste alerte</a>
+                      </div>
+                      <hr>
+                      
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card overflow-hidden">
+                <div class="card-body pb-0">
+                  <div class="d-flex align-items-start">
+                    <div>
+                      <h4 class="card-title">Alerte imminent</h4>
+                      <p class="card-subtitle">alerte a venir</p>
+                    </div>
+
+                  </div>
+                  {% if alerte_imminente %}
+                  <div class="mt-4 pb-3 d-flex align-items-center">
+                    <span class="btn btn-danger rounded-circle round-48 hstack justify-content-center">
+                      <i class="ti ti-urgent fs-6"></i>
+                    </span>
+                    <div class="ms-3">
+                      <h5 class="mb-0 fw-bolder fs-4">{{ alerte_imminente.nom_type }}</h5>
+                      <span class="badge bg-secondary-subtle text-muted">{{ alerte_imminente.date_declenchement_cible }}</span>
+
+                    </div>
+                  </div>
+                  {% else %}
+                      <p>Aucune alerte imminent pour le moment</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-md-flex align-items-center">
+                    <div>
+                      <h4 class="card-title">Dossier recemement ajouté</h4>
+                      <p class="card-subtitle">
+                        dossier ajouter dernierement
+                      </p>
+                    </div>
+
+                  </div>
+                  <div class="table-responsive mt-4">
+                  {% if dossier_recent %}
+                    <table class="table mb-0 text-nowrap varient-table align-middle fs-3">
+                      <thead>
+                        <tr>
+                          <th scope="col" class="px-0 text-muted">
+                            Auteur
+                          </th>
+                          <th scope="col" class="px-0 text-muted">Nom dossier</th>
+                          <th scope="col" class="px-0 text-muted">
+                            statut
+                          </th>
+                          <th scope="col" class="px-0 text-muted text-end">
+                            date cration
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for d in dossier_recent %}
+                        <tr>
+                          <td class="px-0">
+                            <div class="d-flex align-items-center">
+                              <img src="{{ d.auteur.profile_picture.url }}" class="rounded-circle" width="40"
+                                alt="flexy" />
+                              <div class="ms-3">
+                                <h6 class="mb-0 fw-bolder">{{ d.auteur.full_name }}</h6>
+                                <span class="text-muted">{{ d.auteur.role }}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="px-0">
+                              <div class="ms-3">
+                                  <h6 class="mb-0 fw-bolder"><a href="{% url 'dossiers:detail_dossier' pk=d.id %}">{{ d.nom_affaire }}</a></h6>
+                                <span class="text-muted">{{ d.numero_dossier }}</span>
+                              </div>
+                          </td>
+                          <td class="px-0">
+                              {% if d.statut == "Ouvert" %}
+                                <span class="badge bg-info">
+                                    {{ d.statut }}
+                                </span>
+                              {% elif d.statut == "Clos" %}
+                                <span class="badge bg-light">
+                                    {{ d.statut }}
+                                </span>
+                              {% else %}
+                                <span class="badge bg-danger-subtle">
+                                    {{ d.statut }}
+                                </span>
+                              {% endif %}
+                          </td>
+                          <td class="px-0 text-dark fw-medium text-end">
+                           {{ d.date_creation }}
+                          </td>
+                        </tr>
+                      {% endfor %}
+
+                      </tbody>
+                    </table>
+                  {% else %}
+                  <p>Aucun dossier n'a ete enregistre pour le moment</p>
+                  {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+      {% endblock %}
+    </div>
+
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myModalLabel">Creer une alerte pour un dossier</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <hr>
+                    {% if dossiers_sans_alerte %}
+                    <div class="modal-body">
+                        <p> Sélectionnez un lien ci-dessous pour y naviguer :</p>
+                        <select class="form-select" id="linkSelector" aria-label="Sélectionnez un lien">
+                            <option selected disabled> Choisir un dossier</option>
+                            {% for d in dossiers_sans_alerte %}
+                            <option value="{% url 'alerts:creation_alerte' dossier_id=d.id %}">{{ d.nom_affaire }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% else %}
+                        <p> Aucun dossier pour le moment </p>
+                    {% endif %}
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  {% block additional_script %} {% endblock %}
+
+
+  <script src="{% static 'libs/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/sidebarmenu.js' %}"></script>
+  <script src="{% static 'js/app.min.js' %}"></script>
+  <script src="{% static 'libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+  <script src="{% static 'libs/simplebar/dist/simplebar.js' %}"></script>
+  <script src="{% static 'js/dashboard.js' %}"></script>
+  <!-- solar icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js' %}"></script>
+
+   <script>
+        // JavaScript pour gérer la redirection automatique lors de la sélection
+        document.getElementById('linkSelector').addEventListener('change', function() {
+            const selectedValue = this.value; // 'this' fait référence à l'élément <select>
+
+            // Vérifie si une option valide a été sélectionnée (pas "Choisir un lien...")
+            if (selectedValue && selectedValue !== 'Choisir un lien...') {
+                window.open(selectedValue, '_blank'); // Ouvre le lien dans un nouvel onglet
+                // Si vous voulez fermer le modal après la navigation, décommentez la ligne ci-dessous:
+                // const myModal = bootstrap.Modal.getInstance(document.getElementById('myModal'));
+                // myModal.hide();
+            }
+        });
+    </script>
+
+</body>
+{% endblock %}
+</html>

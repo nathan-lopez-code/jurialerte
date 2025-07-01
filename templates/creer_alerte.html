@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block title %} Creation alerte juridique {% endblock %}
+
+{% block css %}
+   <style>
+        /* Styles personnalisés pour améliorer l'intégration Bootstrap */
+        .container {
+            max-width: 700px;
+            margin-top: 50px;
+            margin-bottom: 50px; /* Ajoute un peu d'espace en bas */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #343a40; /* Couleur de texte sombre pour les titres */
+        }
+        .lead {
+            color: #6c757d; /* Couleur de texte plus claire pour les paragraphes d'introduction */
+        }
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: .5rem;
+        }
+        .form-text {
+            font-size: 0.875em;
+            color: #6c757d;
+        }
+        .alert-danger {
+            margin-top: .5rem;
+            font-size: 0.875em;
+        }
+        .messages {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+        .messages li {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: .25rem;
+            font-weight: 500;
+        }
+        .messages .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        /* Styles spécifiques pour les listes de checkboxes (destinataires) */
+        .checkbox-list ul {
+            list-style: none;
+            padding-left: 0;
+            margin-top: .5rem;
+            border: 1px solid #ced4da; /* Bordure légère */
+            border-radius: .25rem;
+            padding: 10px;
+            max-height: 200px; /* Hauteur maximale pour le scroll */
+            overflow-y: auto; /* Active le scroll si nécessaire */
+        }
+        .checkbox-list ul li {
+            margin-bottom: .25rem;
+        }
+        .checkbox-list .form-check-input {
+            margin-right: .5rem;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="body-wrapper-inner">
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-header">
+                <h5 class="mb-4">Créer une Alerte pour le Dossier :<a href="{% url 'dossiers:detail_dossier' pk=dossier.id %}"> <span class="text-primary">{{ dossier.numero_dossier }} - {{ dossier.nom_affaire }}</span></a></h5>
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="card-body">
+              <h5 class="card-title fw-semibold mb-4">Formulaire de creation </h5>
+              <div class="card">
+                <div class="card-body">
+                  <form method="post" novalidate> {# novalidate désactive la validation HTML5 par défaut pour laisser Django la gérer #}
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                            {% if field.name == 'est_multiple' %}
+
+                                <div class="form-group form-check mb-3" id="div_{{ field.name }}">
+                                    {{ field }} {# L'input checkbox #}
+                                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {% if field.help_text %}
+                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        {% for error in field.errors %}
+                                            <div class="alert alert-danger mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            {% elif field.name == 'destinataires' %}
+                                {# Traitement spécifique pour la liste de checkboxes 'destinataires' (ManyToMany) #}
+                                <div class="form-group" id="div_{{ field.name }}">
+                                    {{ field.label_tag }}
+                                    <div class="checkbox-list"> {# Conteneur personnalisé pour les checkboxes #}
+                                        {{ field }}
+                                    </div>
+                                    {% if field.help_text %}
+                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        {% for error in field.errors %}
+                                            <div class="alert alert-danger mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                {# Traitement par défaut pour les autres champs (text, select, datetime-local, number) #}
+                                <div class="form-group" id="div_{{ field.name }}">
+                                    {{ field.label_tag }} {# Affiche le label du champ #}
+                                    {{ field }} {# Affiche l'input/select généré par Django #}
+                                    {% if field.help_text %}
+                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        {% for error in field.errors %}
+                                            <div class="alert alert-danger mt-1">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        {# Affichage des erreurs non liées à un champ spécifique #}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger mt-3">
+                                {% for error in form.non_field_errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-outline-info mt-3 col-7">Créer l'Alerte</button>
+                            <a href="{% url 'dossiers:detail_dossier' pk=dossier.pk %}" class="btn btn-outline-danger mt-3 ml-2 col-4">Annuler</a>
+                        </div>
+
+                    </form>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block additional_script %}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Récupération des propriétés des types d'alerte passées par la vue
+        const typeProperties = {{ type_properties_json|safe }};
+
+        // Sélection des éléments HTML pertinents
+        const nomTypeSelect = $('#id_nom_type');
+        const dateEvenementInitialDiv = $('#div_date_evenement_initial');
+        const estMultipleDiv = $('#div_est_multiple');
+        const delaiJoursDiv = $('#div_delai_jours');
+        const delaiHeuresDiv = $('#div_delai_heures');
+        const descriptionTypeDiv = $('#div_description_type');
+
+        const estMultipleCheckbox = $('#id_est_multiple');
+        const delaiJoursInput = $('#id_delai_jours');
+        const delaiHeuresInput = $('#id_delai_heures');
+        const descriptionTypeInput = $('#id_description_type');
+
+
+        /**
+         * Fonction pour basculer la visibilité et l'état des champs
+         * en fonction du type d'alerte sélectionné.
+         */
+        function toggleFieldsVisibility() {
+            const selectedTypeKey = nomTypeSelect.val(); // La valeur 'audience', 'conclusion', etc.
+            const props = typeProperties[selectedTypeKey]; // Récupère les propriétés du type sélectionné
+
+            if (props) {
+                // Gérer la visibilité du champ date_evenement_initial
+                if (selectedTypeKey === 'audience' && props.est_multiple) {
+                    dateEvenementInitialDiv.show();
+                    $('#id_date_evenement_initial').prop('required', true);
+                } else {
+                    dateEvenementInitialDiv.hide();
+                    $('#id_date_evenement_initial').prop('required', false);
+                }
+
+                // Appliquer les propriétés et désactiver les champs s'ils sont fixes pour le type
+                // Description du type
+                descriptionTypeDiv.show();
+                descriptionTypeInput.val(props.description_type || '').prop('disabled', true);
+
+                // Est Multiple
+                estMultipleDiv.show(); // S'assurer que le div est visible
+                estMultipleCheckbox.prop('checked', props.est_multiple);
+                estMultipleCheckbox.prop('disabled', true); // Désactive pour empêcher la modification
+
+                // Délais (Jours/Heures)
+                delaiJoursDiv.show();
+                delaiHeuresDiv.show();
+                delaiJoursInput.val(props.delai_jours).prop('disabled', true);
+                delaiHeuresInput.val(props.delai_heures).prop('disabled', true);
+
+            } else {
+                // Si aucun type n'est sélectionné ou si le type est inconnu (ce qui ne devrait pas arriver avec les choices)
+                dateEvenementInitialDiv.hide();
+                descriptionTypeDiv.hide();
+                estMultipleDiv.hide();
+                delaiJoursDiv.hide();
+                delaiHeuresDiv.hide();
+                // Assurez-vous de réactiver les champs s'ils étaient désactivés et que l'on change de type
+                $('#id_date_evenement_initial').prop('required', false);
+                estMultipleCheckbox.prop('disabled', false);
+                delaiJoursInput.prop('disabled', false);
+                delaiHeuresInput.prop('disabled', false);
+                descriptionTypeInput.prop('disabled', false);
+            }
+        }
+
+        // Écouteur d'événement : quand le type d'alerte est changé
+        nomTypeSelect.on('change', toggleFieldsVisibility);
+
+        // Appeler la fonction au chargement de la page pour définir l'état initial du formulaire
+        toggleFieldsVisibility();
+
+        // Amélioration du style des checkboxes de destinataires
+        // Django génère un <ul><li><label><input type="checkbox"></label></li></ul>
+        // Nous allons ajouter les classes Bootstrap manuellement aux éléments générés
+        $('#div_destinataires ul').addClass('list-group');
+        $('#div_destinataires ul li').addClass('list-group-item');
+        $('#div_destinataires input[type="checkbox"]').addClass('form-check-input mr-2'); // Ajoutez une marge à droite
+        $('#div_destinataires label').addClass('form-check-label'); // Applique aux labels générés
+
+    </script>
+{% endblock %}
