@@ -44,7 +44,10 @@ def login_(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            utilisateur = Utilisateur.objects.filter(username=username, password=password)[0]
+            try:
+                utilisateur = Utilisateur.objects.filter(username=username, password=password)[0]
+            except:
+                utilisateur = None
 
             if utilisateur is not None:
                 login(request, utilisateur)
@@ -54,6 +57,6 @@ def login_(request):
                     'form': form,
                     'error_message' : "mot de passe  ou username incorrect"
                 }
-                return HttpResponse('une erreur')
+                return render(request, 'login.html', context)
 
     return render(request, 'login.html', {'form': form})
